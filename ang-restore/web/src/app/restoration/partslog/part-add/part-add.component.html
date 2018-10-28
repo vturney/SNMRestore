@@ -1,0 +1,24 @@
+<div fxFlex="100" fxLayoutAlign="center">
+  <form (ngSubmit)="onSubmit()" fxFlex="90">
+    <div fxLayout="row">
+      <app-auto-dd fxFlex="50" #componentField [options]="components" watermark="Component" (blur)="compnentBlur($event)"></app-auto-dd>
+      <app-auto-dd fxFlex="50" [disabled]="disableType" #typeField [options]="types" watermark="Type"></app-auto-dd>
+    </div>
+    <div fxLayout="row">
+      <app-auto-dd fxFlex="25" #partNameField [options]="partNames" watermark="Part"></app-auto-dd>
+      <app-auto-dd fxFlex="50" #partDescField [options]="descriptions" watermark="Description"></app-auto-dd>
+      <app-auto-dd fxFlex="25" #colourField [options]="colours" watermark="Colour"></app-auto-dd>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center">
+      <mat-form-field fxFlex="5"> <input type="number" matInput placeholder="Quantity" name="quantity" [(ngModel)]="restorePart.quantity"></mat-form-field>
+      <mat-checkbox fxFlex="5" color="accent" name="partSent" [(ngModel)]="restorePart.sent">Sent</mat-checkbox>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center"> 
+      <button fxFlex="20" mat-raised-button color="accent" type="submit">Add Part</button>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center"  *ngIf="status.length>0">
+      <mat-form-field fxFlex="80"><input type="text"  matInput name="status" ng-readonly="true"   [(ngModel)]="status"
+          aria-label="Readonly field"></mat-form-field>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,14 @@
+<div>
+  <h1>
+    {{ title }}
+  </h1>
+  <mat-tab-group color="accent"  [(selectedIndex)]="selectedTab">
+    <mat-tab label="Home">
+      <app-home (jobSelected)="onJobSelected($event)"></app-home>
+    </mat-tab>
+    <mat-tab label="Current Restoration">
+      <app-restoration #currentRestoration></app-restoration>
+    </mat-tab>
+    <mat-tab label="Admin"></mat-tab>
+  </mat-tab-group>
+</div>

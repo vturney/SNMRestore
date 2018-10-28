@@ -1,0 +1,14 @@
+<div>
+  <mat-nav-list>
+    <mat-list-item *ngFor="let job of restorations">
+        <h3 matLine> Job: {{job.jobId}} </h3>
+        <p matLine> {{job.customer}} </p>
+        <p matLine> 
+          <span> {{job.bike.make}} {{job.bike.model}} {{job.bike.year}}</span>
+        </p>
+       <button mat-icon-button (click)="setCurrent(job.jobId)">
+          <mat-icon>build</mat-icon>
+       </button>
+    </mat-list-item>
+  </mat-nav-list>
+</div>
