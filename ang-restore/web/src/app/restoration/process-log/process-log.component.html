@@ -1,0 +1,19 @@
+<div fxFlex="100">
+    <mat-accordion  [multi]='true'>
+        <mat-expansion-panel [(expanded)]="expandAdd">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Add Log Item
+            </mat-panel-title>
+            <mat-panel-description>                  
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <app-add-process-log #addLog (addedLog)="logAdded($event)"></app-add-process-log>
+        </mat-expansion-panel>
+        </mat-accordion>  
+  <mat-list color="primary">
+    <mat-list-item *ngFor="let log of logItems">
+        <h3 matLine> {{log.date  | date:'dd/MM/yyyy'}} : {{log.log}} </h3>       
+    </mat-list-item>
+  </mat-list>
+</div>

@@ -9,6 +9,7 @@ import { Part } from '../shared/model/restore-parts/part';
 import { RestorePart } from '../shared/model/restore-parts/restore-part';
 import { Restoration } from '../shared/model/restoration';
 import { RestorationDetail } from '../shared/model/restore-detail';
+import { ProcessLogItem } from '../shared/model/restore-parts/process-log-item';
 
 interface ComponentsResponse {
   components: BikeComponent[];
@@ -24,6 +25,10 @@ interface PartDescriptionsResponse {
 
 interface PartsResponse {
   parts: Part[];
+}
+
+interface ProcessLogResponse {
+  processLog: ProcessLogItem[];
 }
 
 interface RestorationResponse {
@@ -70,10 +75,15 @@ export class RestoreRestService {
     pipe(map((response: RestorationsDetails) => { return response.restorations; }));
   }
 
+  getRestorationProcessLog(jobId : number):Observable<ProcessLogItem[]>{
+    return this.http.get<ProcessLogResponse>(endpoint + 'processLogs/' + jobId).
+      pipe(map((response: ProcessLogResponse) => {return response.processLog; }));
+  }
+
   //  POST http://localhost:3000/api/v1/restorations/25622/parts
   saveRestorePart(jobId: number, part: RestorePart): Observable<ResultResponse> {
-    console.log('save Restore Part');
-    console.log(part);
+   // console.log('save Restore Part');
+   // console.log(part);
     return this.http.post<ResultResponse>(endpoint + 'restorations/' + jobId + '/parts', part).
       pipe(map(r => {
         if (r.result === "UPDATED" || r.result === "ADDED") {
@@ -82,6 +92,18 @@ export class RestoreRestService {
         }
         return r;
       }));
+  }
+
+  saveRestoration(restoration:RestorationDetail): Observable<ResultResponse>{
+    console.log('save Restoration');
+    console.log(restoration);
+    return this.http.post<ResultResponse>(endpoint + 'restorations/', restoration).
+    pipe(map(r => { return r;}));
+  }
+
+  saveRestoreProcessLog(jobId: number,log:ProcessLogItem) : Observable<ResultResponse>{
+    return this.http.post<ResultResponse>(endpoint + 'restorations/' + jobId + '/processLog', log).
+    pipe(map(r => { return r;}));
   }
 
   private _getRestorationFromApi(jobId: number): Observable<Restoration> {
@@ -146,4 +168,4 @@ export class RestoreRestService {
 
 }
 
-const endpoint = 'http://localhost:3000/api/v1/';
+const endpoint = 'http://192.168.1.67:3000/api/v1/';

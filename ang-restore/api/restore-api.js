@@ -24,6 +24,34 @@ app.use(function (req, res, next) {
 
 app.listen(port, () => console.log(`SNM Restoration API listening on port ${port}!`))
 
+//Route path: /processLogs/:jobId/
+//Request URL: http://localhost:3000/api/v1/processLogs/25622
+//req.params: { "jobId": "25622"}
+app.get('/api/v1/processLogs/:jobId', (req, res) => {
+    try {
+        var jobId = Number(req.params.jobId);
+        console.log('GET processLogs, jobID:' + jobId);
+        _getRestorationProcessLog(jobId, function (data) {
+            //console.log('get restoration complete');
+            if (data) {
+                console.log(data);
+                var processLogItems = data.items;
+                response = _wrapDBJson(processLogItems, "processLog");
+                res.send(response)
+            }
+            else {
+                response = _wrapDBJson([], "processLog");
+                res.send(response)
+            }
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(404);
+        res.send('Proccess Log Not Found');
+    }
+});
+
 //Route path: /restorations/:jobId/
 //Request URL: http://localhost:3000/api/v1/restorations/25622
 //req.params: { "restorationId": "2"}
@@ -50,6 +78,34 @@ app.get('/api/v1/restorations/:jobId', (req, res) => {
         res.send('Restoration Not Found');
     }
 });
+
+//Route path: /restorations/:jobId/
+//Request URL: POST http://localhost:3000/api/v1/restorations
+//req.params: 
+app.post('/api/v1/restorations', function (req, res) {
+    var restoration = req.body;
+    console.log('POST restoration');
+    console.log(restoration);
+    try {
+        _addRestoration(restoration, function (partAdded) {
+            if (partAdded) {
+                console.log('post restoration, response:ADDED');
+                res.json({ result: "ADDED" });
+            }
+            else {
+                console.log('post restoration, response:UPDATED');
+                res.json({ result: "UPDATED" });
+            }
+        });
+    }
+    catch (err) {
+        console.log(err);
+        console.log('post restoration, response:ERROR');
+        res.status(400);
+        res.json({ result: "ERROR" });
+    }
+});
+
 
 //Route path: /restorations/:jobId/parts/
 //Request URL: POST http://localhost:3000/api/v1/restorations/25266/parts
@@ -85,6 +141,32 @@ app.post('/api/v1/restorations/:jobId/parts', function (req, res) {
     catch (err) {
         console.log(err);
         console.log('post parts, response:ERROR');
+        res.status(400);
+        res.json({ result: "ERROR" });
+    }
+});
+
+//Route path: /restorations/:jobId/processLog/
+//Request URL: POST http://localhost:3000/api/v1/restorations/25266/processLog
+//req.params: 
+app.post('/api/v1/restorations/:jobId/processLog', function (req, res) {
+    var log = req.body;
+    var jobId = Number(req.params.jobId);
+    console.log('POST restorations/processLog, jobId: ' + jobId);
+    console.log(log);
+    try {
+        _addProcessLogItemForRestoration(jobId, log, function (logAdded) {
+            if (logAdded) {
+                console.log('post processLog, response: ADDED');
+                res.json({ result: "ADDED" });
+            } else {
+                res.json({ result: "UKNOWN" });
+            }
+        });
+    }
+    catch (err) {
+        console.log(err);
+        console.log('post process log, response:ERROR');
         res.status(400);
         res.json({ result: "ERROR" });
     }
@@ -140,7 +222,7 @@ app.get('/api/v1/partDescriptions', (req, res) => {
 function _createRestoreResponseFromRestoreData(dataR) {
     //console.log(dataR);
     var restoration = _createRestoreDetailFromRestore(dataR);
-    restoration.parts = dataR.parts ;
+    restoration.parts = dataR.parts;
     response = _wrapDBJson(restoration, "restoration");
     //console.log(response);
     return response;
@@ -161,6 +243,13 @@ function _getRestorationData(jobId, onComplete) {
     db.collection('restorations').findOne({ jobid: jobId }, function (err, result) {
         if (err) console.log(err);
         // console.log(result);
+        onComplete(result);
+    })
+}
+
+function _getRestorationProcessLog(jobId, onComplete) {
+    db.collection('processlogs').findOne({ jobid: jobId }, function (err, result) {
+        if (err) console.log(err);
         onComplete(result);
     })
 }
@@ -203,6 +292,39 @@ function _addByNameAndTypeIfNotExist(collection, nameToFind, componentType) {
         });
 }
 
+function _addRestoration(restoration, onComplete) {
+    // add restoration
+    //console.log('in add restoration');
+    //console.log(restoration);
+    db.collection('restorations').replaceOne(
+        { "jobid": restoration.jobId }, // filter  
+        {
+            "jobid": restoration.jobId,
+            "customer": restoration.customer,
+            "notes": restoration.notes,
+            "bike": {
+                "make": restoration.bike.make,
+                "model": restoration.bike.model,
+                "year": restoration.bike.year,
+                "image": restoration.bike.image,
+            },
+            "parts": [],
+            "state": 0
+        }, // update
+        { upsert: true }, // options
+        function (err, result) {
+            // console.log('db result');
+            // console.log(result);
+            var added = false;
+            if (result.upsertedCount === 1) {
+                added = true;
+            }
+            console.log('add restoration:' + added);
+            onComplete(added);
+        }
+    );
+}
+
 function _addPartForRestoration(jobId, part, onComplete) {
     // add part to restoration
     //console.log('in add part for restoration');
@@ -225,8 +347,27 @@ function _addPartForRestoration(jobId, part, onComplete) {
         );
 }
 
+function _addProcessLogItemForRestoration(jobId, logItem, onComplete) {
+    var logItem = { date: Date.now(), log: logItem.log };
+
+    db.collection('processlogs').updateOne(
+        { "jobid": jobId },
+        { $push: { "items": logItem } },
+        { upsert: true },
+        function (err, result) {
+            //console.log(result);
+            var added = false;
+            if (result.modifiedCount === 1 || result.upsertedCount === 1) {
+                added = true;
+            }
+            console.log('added log Item to restoration:' + added);
+            onComplete(added);
+        }
+    );
+}
+
 function _updateIfExistsPartForRestoration(jobId, part, onComplete) {
-    console.log('in get part id for restoratin part');
+    //console.log('in get part id for restoratin part');
     //console.log(jobId);
     //console.log(part);
     db.collection('restorations').
@@ -288,6 +429,7 @@ function _getParts(onComplete) {
     // });
 
     //return db.parts.find( {} );
+
 }
 
 function _getColours(onComplete) {

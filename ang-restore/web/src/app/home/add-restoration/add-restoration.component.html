@@ -1,0 +1,30 @@
+<div fxFlex="100" fxLayoutAlign="center">
+  <form fxFlex="90" [formGroup]="restorationForm" (ngSubmit)="saveRestoration(formDirective)" #formDirective="ngForm">
+    <div fxLayout="row" fxLayoutAlign="center">
+      <mat-form-field fxFlex="25"><input formControlName="job" required="true" autocomplete="off" type="number"
+          matInput placeholder="Job"></mat-form-field>
+      <mat-form-field fxFlex="75"><input formControlName="customer" required="true" autocomplete="off" matInput
+          placeholder="Customer"></mat-form-field>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center">
+      <mat-form-field fxFlex="100" color="accent"><input formControlName="notes" autocomplete="off" matInput
+          placeholder="Notes"></mat-form-field>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center">
+      <mat-form-field fxFlex="33" color="accent"><input formControlName="bikeMake" autocomplete="off" required="true"
+          matInput placeholder="Bike Make"></mat-form-field>
+      <mat-form-field fxFlex="33" color="accent"><input formControlName="bikeModel" autocomplete="off" required="true"
+          required="true" matInput placeholder="Bike Model"></mat-form-field>
+      <mat-form-field fxFlex="33"> <input type="number" formControlName="bikeYear" autocomplete="off" required="true"
+          matInput placeholder="Bike Year"></mat-form-field>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center">
+      <mat-form-field fxFlex="100" color="accent"><input formControlName="bikeImage" autocomplete="off" matInput
+          placeholder="Bike Image Url"></mat-form-field>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center">
+      <button [disabled]="!restorationForm.valid" fxFlex="50" mat-raised-button color="accent" type="submit">Add
+        Restoration</button>
+    </div>
+  </form>
+</div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, EventEmitter, Output, ElementRef } from '@angular/core';
 import { BikeComponent } from 'src/app/shared/model/restore-parts/bike-component';
 import { Part } from 'src/app/shared/model/restore-parts/part';
 import { PartColour } from 'src/app/shared/model/restore-parts/part-colour';

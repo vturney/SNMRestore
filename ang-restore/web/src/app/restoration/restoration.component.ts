@@ -4,6 +4,9 @@ import { RestorePart } from '../shared/model/restore-parts/restore-part';
 import { PartsListComponent } from './partslog/parts-list/parts-list.component';
 import { PartAddComponent } from './partslog/part-add/part-add.component';
 import { RestoreDetailComponent } from './restore-detail/restore-detail.component';
+import { ProcessLogItem } from '../shared/model/restore-parts/process-log-item';
+import { AddProcessLogComponent } from './process-log/add-process-log/add-process-log.component';
+import { ProcessLogComponent } from './process-log/process-log.component';
 
 @Component({
   selector: 'app-restoration',
@@ -16,6 +19,7 @@ export class RestorationComponent implements OnInit {
   @ViewChild('enginePartsList') enginePartsLog: PartsListComponent;
   @ViewChild('addPart') addPartComp: PartAddComponent;
   @ViewChild('restoreDetail') detailComp: RestoreDetailComponent;
+  @ViewChild('processLog') processLogComp : ProcessLogComponent;
 
   jobId: number;
 
@@ -28,8 +32,18 @@ export class RestorationComponent implements OnInit {
       this._refreshDetail();
       this._refreshAddPart();
       this._refreshPartLogs();
+      this._refreshProcessLog();
     }
   }
+
+  saveLogItem(logItem:ProcessLogItem){
+  this.restoreApi.saveRestoreProcessLog(this.jobId, logItem).subscribe(r => {
+    console.log(r);
+    if (r.result === "ADDED") {
+      this._refreshProcessLog();
+    } 
+  });
+}
 
   saveRestorePart(part: RestorePart) {
     this.restoreApi.saveRestorePart(this.jobId, part).subscribe(r => {
@@ -53,6 +67,11 @@ export class RestorationComponent implements OnInit {
     console.log('refreshing parts lists');
     this.chassisPartsLog.reload(this.jobId);
     this.enginePartsLog.reload(this.jobId);
+  }
+
+  _refreshProcessLog(){
+    console.log('refreshing processLog');
+    this.processLogComp.reload(this.jobId);
   }
 
   _refreshDetail() {

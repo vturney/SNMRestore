@@ -9,6 +9,7 @@ import { RestoreRestService } from 'src/app/data/restore-rest.service';
 })
 export class HomeComponent implements OnInit {
   restorations : RestorationDetail[];
+  expandAdd : boolean;
   @Output() jobSelected = new EventEmitter<number>();
 
   constructor(public restoreApi:RestoreRestService){        
@@ -21,6 +22,11 @@ export class HomeComponent implements OnInit {
   setCurrent(jobId:number){
     console.log('setting current restoration:'+jobId);
     this.jobSelected.emit(jobId);
+  }
+
+  restorationAdded() {
+    this.refresh();
+    this.expandAdd = false;
   }
 
   public refresh(){

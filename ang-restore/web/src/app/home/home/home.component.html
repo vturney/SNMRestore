@@ -1,5 +1,17 @@
-<div>
-  <mat-nav-list>
+<div fxFlex="100">
+    <mat-accordion  [multi]='true'>
+        <mat-expansion-panel [(expanded)]="expandAdd">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Add Restoration
+            </mat-panel-title>
+            <mat-panel-description>                  
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <app-add-restoration #addRestoration (addedRestoration)="restorationAdded($event)"></app-add-restoration>
+        </mat-expansion-panel>
+        </mat-accordion>  
+  <mat-list color="primary">
     <mat-list-item *ngFor="let job of restorations">
         <h3 matLine> Job: {{job.jobId}} </h3>
         <p matLine> {{job.customer}} </p>
@@ -10,5 +22,5 @@
           <mat-icon>build</mat-icon>
        </button>
     </mat-list-item>
-  </mat-nav-list>
+  </mat-list>
 </div>
