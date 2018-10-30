@@ -7,6 +7,8 @@ import { RestoreDetailComponent } from './restore-detail/restore-detail.componen
 import { ProcessLogItem } from '../shared/model/restore-parts/process-log-item';
 import { AddProcessLogComponent } from './process-log/add-process-log/add-process-log.component';
 import { ProcessLogComponent } from './process-log/process-log.component';
+import { OrderedPartsLogComponent } from './ordered-parts-log/ordered-parts-log.component';
+import { OrderedPart } from '../shared/model/restore-parts/ordered-part-item';
 
 @Component({
   selector: 'app-restoration',
@@ -20,6 +22,7 @@ export class RestorationComponent implements OnInit {
   @ViewChild('addPart') addPartComp: PartAddComponent;
   @ViewChild('restoreDetail') detailComp: RestoreDetailComponent;
   @ViewChild('processLog') processLogComp : ProcessLogComponent;
+  @ViewChild('reqPartLog') reqPartLogComp : OrderedPartsLogComponent;
 
   jobId: number;
 
@@ -33,6 +36,7 @@ export class RestorationComponent implements OnInit {
       this._refreshAddPart();
       this._refreshPartLogs();
       this._refreshProcessLog();
+      this._refreshRequiredPartsLog();
     }
   }
 
@@ -41,6 +45,28 @@ export class RestorationComponent implements OnInit {
     console.log(r);
     if (r.result === "ADDED") {
       this._refreshProcessLog();
+    } 
+  });
+}
+
+saveRequiredPart(reqPart:OrderedPart){
+    console.log('saving req part');
+    console.log(reqPart);
+    this.restoreApi.saveRestoreOrderedPart(this.jobId, reqPart).subscribe(r => {
+      console.log(r);
+      if (r.result === "ADDED") {
+        this._refreshRequiredPartsLog();
+      } 
+    });
+}
+
+updateRequiredPart(reqPart:OrderedPart){
+  console.log('updating req part');
+  console.log(reqPart);
+  this.restoreApi.updateRestoreOrderedPart(this.jobId, reqPart).subscribe(r => {
+    console.log(r);
+    if (r.result === "UPDATED") {
+      this._refreshRequiredPartsLog();
     } 
   });
 }
@@ -72,6 +98,11 @@ export class RestorationComponent implements OnInit {
   _refreshProcessLog(){
     console.log('refreshing processLog');
     this.processLogComp.reload(this.jobId);
+  }
+
+  _refreshRequiredPartsLog(){
+    console.log('refreshing required parts log');
+    this.reqPartLogComp.reload(this.jobId);
   }
 
   _refreshDetail() {

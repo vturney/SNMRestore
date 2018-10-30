@@ -10,6 +10,7 @@ import { RestorePart } from '../shared/model/restore-parts/restore-part';
 import { Restoration } from '../shared/model/restoration';
 import { RestorationDetail } from '../shared/model/restore-detail';
 import { ProcessLogItem } from '../shared/model/restore-parts/process-log-item';
+import { OrderedPart } from '../shared/model/restore-parts/ordered-part-item';
 
 interface ComponentsResponse {
   components: BikeComponent[];
@@ -29,6 +30,10 @@ interface PartsResponse {
 
 interface ProcessLogResponse {
   processLog: ProcessLogItem[];
+}
+
+interface OrderedPartsResponse{
+  orderedParts : OrderedPart[];
 }
 
 interface RestorationResponse {
@@ -80,6 +85,11 @@ export class RestoreRestService {
       pipe(map((response: ProcessLogResponse) => {return response.processLog; }));
   }
 
+  getRestorationOrderedParts(jobId : number):Observable<OrderedPart[]>{
+    return this.http.get<OrderedPartsResponse>(endpoint + 'orderedParts/' + jobId).
+      pipe(map((response: OrderedPartsResponse) => {return response.orderedParts; }));
+  }
+
   //  POST http://localhost:3000/api/v1/restorations/25622/parts
   saveRestorePart(jobId: number, part: RestorePart): Observable<ResultResponse> {
    // console.log('save Restore Part');
@@ -102,7 +112,18 @@ export class RestoreRestService {
   }
 
   saveRestoreProcessLog(jobId: number,log:ProcessLogItem) : Observable<ResultResponse>{
-    return this.http.post<ResultResponse>(endpoint + 'restorations/' + jobId + '/processLog', log).
+    return this.http.post<ResultResponse>(endpoint + 'processLogs/' + jobId + '/logItem', log).
+    pipe(map(r => { return r;}));
+  }
+
+  
+  saveRestoreOrderedPart(jobId: number, orderedPart:OrderedPart) : Observable<ResultResponse>{
+    return this.http.post<ResultResponse>(endpoint + 'orderedParts/' + jobId + '/orderedPart', orderedPart).
+    pipe(map(r => { return r;}));
+  }
+
+  updateRestoreOrderedPart(jobId: number, orderedPart:OrderedPart) : Observable<ResultResponse>{
+    return this.http.patch<ResultResponse>(endpoint + 'orderedParts/' + jobId + '/orderedPart', orderedPart).
     pipe(map(r => { return r;}));
   }
 

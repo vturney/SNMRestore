@@ -19,6 +19,7 @@ app.use(bodyParser.json());
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Methods', 'GET, PATCH, POST,DELETE');
     next();
 });
 
@@ -49,6 +50,34 @@ app.get('/api/v1/processLogs/:jobId', (req, res) => {
         console.log(err);
         res.status(404);
         res.send('Proccess Log Not Found');
+    }
+});
+
+//Route path: /orderedParts/:jobId/
+//Request URL: http://localhost:3000/api/v1/orderedParts/25622
+//req.params: { "jobId": "25622"}
+app.get('/api/v1/orderedParts/:jobId', (req, res) => {
+    try {
+        var jobId = Number(req.params.jobId);
+        console.log('GET orderedParts, jobID:' + jobId);
+        _getRestorationOrderedParts(jobId, function (data) {
+            //console.log('get ordered parts complete');
+            if (data) {
+                console.log(data);
+                var processLogItems = data.items;
+                response = _wrapDBJson(processLogItems, "orderedParts");
+                res.send(response)
+            }
+            else {
+                response = _wrapDBJson([], "orderedParts");
+                res.send(response)
+            }
+        });
+    }
+    catch (err) {
+        console.log(err);
+        res.status(404);
+        res.send('Ordered Parts Log Not Found');
     }
 });
 
@@ -146,18 +175,18 @@ app.post('/api/v1/restorations/:jobId/parts', function (req, res) {
     }
 });
 
-//Route path: /restorations/:jobId/processLog/
-//Request URL: POST http://localhost:3000/api/v1/restorations/25266/processLog
+//Route path: /processLogs/25266/logItem
+//Request URL: POST http://localhost:3000/api/v1/processLogs/25266/logItem
 //req.params: 
-app.post('/api/v1/restorations/:jobId/processLog', function (req, res) {
+app.post('/api/v1/processLogs/:jobId/logItem', function (req, res) {
     var log = req.body;
     var jobId = Number(req.params.jobId);
-    console.log('POST restorations/processLog, jobId: ' + jobId);
-    console.log(log);
+    console.log('POST processLogs/logItem, jobId: ' + jobId);
+    //console.log(log);
     try {
         _addProcessLogItemForRestoration(jobId, log, function (logAdded) {
             if (logAdded) {
-                console.log('post processLog, response: ADDED');
+                //console.log('post processLog, response: ADDED');
                 res.json({ result: "ADDED" });
             } else {
                 res.json({ result: "UKNOWN" });
@@ -167,6 +196,60 @@ app.post('/api/v1/restorations/:jobId/processLog', function (req, res) {
     catch (err) {
         console.log(err);
         console.log('post process log, response:ERROR');
+        res.status(400);
+        res.json({ result: "ERROR" });
+    }
+});
+
+//Route path: /orderedParts/25266/orderedPart
+//Request URL: POST http://localhost:3000/api/v1/orderedParts/25266/orderedPart
+//req.params: 
+app.post('/api/v1/orderedParts/:jobId/orderedPart', function (req, res) {
+    var orderedPart = req.body;
+    var jobId = Number(req.params.jobId);
+    console.log('POST orderedParts/orderedPart, jobId: ' + jobId);
+    //console.log(log);
+    try {
+        _addOrderedPartForRestoration(jobId, orderedPart.log, function (logAdded) {
+            if (logAdded) {
+                //console.log('post orderedPart, response: ADDED');
+                res.json({ result: "ADDED" });
+            } else {
+                res.json({ result: "UKNOWN" });
+            }
+        });
+    }
+    catch (err) {
+        console.log(err);
+        console.log('post ordered part, response:ERROR');
+        res.status(400);
+        res.json({ result: "ERROR" });
+    }
+});
+
+//Route path: /orderedParts/25266/orderedPart
+//Request URL: PATCH http://localhost:3000/api/v1/orderedParts/25266/orderedPart
+//req.params: 
+app.patch('/api/v1/orderedParts/:jobId/orderedPart', function (req, res) {
+    var log = req.body;
+    var jobId = Number(req.params.jobId);   
+    var patch = req.body;
+    var orderedPartId = patch.id;
+    var state = Number(patch.state);
+    console.log('PATCH orderedParts/orderedPart, jobId: ' + jobId+', partId:' +orderedPartId+', state:' +state);
+    //console.log(log);
+    try {
+        _updateOrderedPartForRestoration(jobId, orderedPartId, state, function (orderedPartUpdated) {
+            if (orderedPartUpdated) {
+                res.json({ result: "UPDATED" });
+            } else {
+                res.json({ result: "UKNOWN" });
+            }
+        });
+    }
+    catch (err) {
+        console.log(err);
+        console.log('patch ordered part, response:ERROR');
         res.status(400);
         res.json({ result: "ERROR" });
     }
@@ -249,6 +332,13 @@ function _getRestorationData(jobId, onComplete) {
 
 function _getRestorationProcessLog(jobId, onComplete) {
     db.collection('processlogs').findOne({ jobid: jobId }, function (err, result) {
+        if (err) console.log(err);
+        onComplete(result);
+    })
+}
+
+function _getRestorationOrderedParts(jobId, onComplete) {
+    db.collection('orderedparts').findOne({ jobid: jobId }, function (err, result) {
         if (err) console.log(err);
         onComplete(result);
     })
@@ -360,10 +450,62 @@ function _addProcessLogItemForRestoration(jobId, logItem, onComplete) {
             if (result.modifiedCount === 1 || result.upsertedCount === 1) {
                 added = true;
             }
-            console.log('added log Item to restoration:' + added);
+            //console.log('added log Item to restoration:' + added);
             onComplete(added);
         }
     );
+}
+
+function _addOrderedPartForRestoration(jobId, desc, onComplete) {
+    var item = { id: new ObjectID(), date: Date.now(), log: desc, state: 1 };
+
+    db.collection('orderedparts').updateOne(
+        { "jobid": jobId },
+        { $push: { "items": item } },
+        { upsert: true },
+        function (err, result) {
+            //console.log(result);
+            var added = false;
+            if (result.modifiedCount === 1 || result.upsertedCount === 1) {
+                added = true;
+            }
+            //console.log('added Missing Item to restoration:' + added);
+            onComplete(added);
+        }
+    );
+}
+
+function _updateOrderedPartForRestoration(jobId,  orderedPartId, state, onComplete) {
+    db.collection('orderedparts').
+    findOneAndUpdate(
+        {
+            "jobid": jobId,
+            "items": {
+                $elemMatch: {
+                    "id": ObjectID(orderedPartId)
+                }
+            }
+        },
+        {    // Update
+            $set: { "items.$.state": state, "items.$.date": Date.now() }
+        },
+        {
+            projection: { "jobid": 1, "items.$": 1 }
+        }
+        , function (err, result) {
+            //
+            //console.log('db result');
+            // console.log(result);
+            // if result.value has something - it found matching record
+            // if lasteErrorObject.updatedExisting : true - it updated the record
+            // if result.ok : 1 = no error.
+            var updated = false;
+            if (result.ok === 1 && result.lastErrorObject.updatedExisting && result.value) {
+                updated = true;
+            }
+            console.log('found and updated:' + updated);
+            onComplete(updated);
+        });
 }
 
 function _updateIfExistsPartForRestoration(jobId, part, onComplete) {

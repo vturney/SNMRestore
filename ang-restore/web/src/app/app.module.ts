@@ -17,6 +17,8 @@ import { HomeComponent } from './home/home/home.component';
 import { AddRestorationComponent } from './home/add-restoration/add-restoration.component';
 import { ProcessLogComponent } from './restoration/process-log/process-log.component';
 import { AddProcessLogComponent } from './restoration/process-log/add-process-log/add-process-log.component';
+import { OrderedPartsLogComponent } from './restoration/ordered-parts-log/ordered-parts-log.component';
+import { AddOrderedPartComponent } from './restoration/ordered-parts-log/add-ordered-part/add-ordered-part.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import { AddProcessLogComponent } from './restoration/process-log/add-process-lo
     HomeComponent,
     AddRestorationComponent,
     ProcessLogComponent,
-    AddProcessLogComponent
+    AddProcessLogComponent,
+    OrderedPartsLogComponent,
+    AddOrderedPartComponent
   ],
   imports: [
     BrowserModule,

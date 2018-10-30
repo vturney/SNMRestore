@@ -1,0 +1,35 @@
+<div fxFlex="100">
+  <mat-accordion [multi]='true'>
+    <mat-expansion-panel [(expanded)]="expandAdd">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Add Required Part
+        </mat-panel-title>
+        <mat-panel-description>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <app-add-ordered-part (addedReqPart)="reqPartAdded($event)"></app-add-ordered-part>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <mat-list color="primary">
+    <ng-container *ngFor="let partGroup of requiredParts">
+      <mat-list-item>{{partGroup.state}}</mat-list-item>
+      <mat-list style="margin-left:30px;">
+        <div *ngFor="let part of partGroup.part">
+          <mat-list-item>
+            <p mat-line>
+              <span *ngIf="part.state ==2">{{part.date | date:'dd/MM/yyyy'}} : </span>
+              <span>{{part.log}}</span>
+            </p>
+            <button *ngIf="part.state === 1" mat-icon-button (click)="reqPartUpdated(part, 2)">
+              <mat-icon style="margin-left:-80px;">shopping_cart</mat-icon><span>Mark as Ordered</span>
+            </button>
+            <button *ngIf="part.state === 2" mat-icon-button (click)="reqPartUpdated(part, 3)">
+              <mat-icon style="margin-left:-80px;">verified_user</mat-icon><span>Mark as Received</span>
+            </button>
+          </mat-list-item>
+        </div>
+      </mat-list>
+    </ng-container>
+  </mat-list>
+</div>

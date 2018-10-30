@@ -1,0 +1,11 @@
+<div fxFlex="100" fxLayoutAlign="center">
+  <form fxFlex="90" [formGroup]="reqPartForm" (ngSubmit)="addReqPart(formDirective)" #formDirective="ngForm">      
+    <div fxLayout="row" fxLayoutAlign="center">
+      <mat-form-field fxFlex="100" color="accent"><input formControlName="message" autocomplete="off" matInput
+          placeholder="Required Part"></mat-form-field>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center">
+      <button [disabled]="!reqPartForm.valid" fxFlex="50" mat-raised-button color="accent" type="submit">Add Required Part</button>
+    </div>
+  </form>
+</div>
