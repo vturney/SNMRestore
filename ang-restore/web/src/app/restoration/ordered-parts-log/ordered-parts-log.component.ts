@@ -9,7 +9,7 @@ import { OrderStateEnum } from 'src/app/shared/model/restore-parts/orderState-en
   styleUrls: ['./ordered-parts-log.component.css']
 })
 export class OrderedPartsLogComponent implements OnInit {
-  requiredParts: {}[];
+  requiredParts: {state:number, part:OrderedPart}[];
   expandAdd: boolean;
   @Output() addRequiredPart = new EventEmitter<OrderedPart>();
   @Output() updateRequiredPart = new EventEmitter<OrderedPart>();
@@ -21,28 +21,28 @@ export class OrderedPartsLogComponent implements OnInit {
 
   public reload(jobId: number) {
     this.restoreApi.getRestorationOrderedParts(jobId).subscribe((data: OrderedPart[]) => {
-      console.log('in opl get');
-      console.log(data);
-      var allParts = data.map(t => t);
-      var p = {};
+      //console.log(data);
+      this._groupByState(data.map(t => t));
+    });
+  }
+
+  _groupByState(allParts : OrderedPart[] ){
+    var p = {};
       allParts.forEach(function (a) {
         p[a.state] = p[a.state] || [];
         p[a.state].push(a);
       });
       allParts.sort();
+      //var a = Object.keys(p).map(key => ({ state :OrderStateEnum[key], part: p[key] }));
       this.requiredParts = Object.keys(p).map(key => ({ state :OrderStateEnum[key], part: p[key] }));
-      console.log(this.requiredParts);
-    });
   }
 
   reqPartAdded(reqPart: OrderedPart) {
-    console.log('req part added in opl');
-    this.addRequiredPart.emit(reqPart);
+       this.addRequiredPart.emit(reqPart);
     this.expandAdd = false;
   }
 
   reqPartUpdated(reqPart: OrderedPart, state: number) {
-    console.log('req part updated in opl');
     reqPart.state = state;
     this.updateRequiredPart.emit(reqPart);
   }

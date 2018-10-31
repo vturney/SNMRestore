@@ -1,42 +1,46 @@
-<div fxFlex="100" >
+<div fxFlex="100">
   <mat-toolbar color="primary">Restoration</mat-toolbar>
   <app-restore-detail #restoreDetail></app-restore-detail>
-<mat-tab-group color="accent">
-  <mat-tab label="Stripped Parts">
-    <mat-toolbar color="primary">Stripped Parts</mat-toolbar>    
-    <mat-accordion  [multi]='true'>
+  <mat-tab-group color="accent">
+    <mat-tab label="Stripped Parts">
+      <mat-toolbar color="primary">Stripped Parts</mat-toolbar>
+      <mat-accordion [multi]='true'>
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>
               Add Part
             </mat-panel-title>
-            <mat-panel-description>                  
+            <mat-panel-description>
             </mat-panel-description>
           </mat-expansion-panel-header>
           <app-part-add #addPart (addRestorePart)="saveRestorePart($event)"></app-part-add>
         </mat-expansion-panel>
         <mat-expansion-panel>
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                Parts Log
-              </mat-panel-title>
-              <mat-panel-description>                  
-              </mat-panel-description>
-            </mat-expansion-panel-header>  
-            <p>Engine</p>              
-           <app-parts-list #enginePartsList componentType=1></app-parts-list>
-           <p>Chassis</p>              
-           <app-parts-list #chassisPartList componentType=2></app-parts-list>
-          </mat-expansion-panel>
-        </mat-accordion>   
-  </mat-tab>
-  <mat-tab label="Process Log">    
-      <mat-toolbar color="primary">Process Log</mat-toolbar> 
-      <app-process-log #processLog (addProcessLog)="saveLogItem($event)"></app-process-log> 
-  </mat-tab>
-  <mat-tab label="Required Parts">    
-      <mat-toolbar color="primary">Required Parts</mat-toolbar> 
-      <app-ordered-parts-log #reqPartLog (addRequiredPart)="saveRequiredPart($event)" (updateRequiredPart)="updateRequiredPart($event)"></app-ordered-parts-log> 
-  </mat-tab>
-</mat-tab-group>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Parts Log
+            </mat-panel-title>
+            <mat-panel-description>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <mat-card>
+            <p>Engine</p>
+            <app-parts-list #enginePartsList componentType=1></app-parts-list>
+          </mat-card>
+          <mat-card style="margin-top:10px">
+            <p>Chassis</p>
+            <app-parts-list #chassisPartList componentType=2></app-parts-list>
+          </mat-card>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-tab>
+    <mat-tab label="Process Log">
+      <mat-toolbar color="primary">Process Log</mat-toolbar>
+      <app-process-log #processLog (addProcessLog)="saveLogItem($event)"></app-process-log>
+    </mat-tab>
+    <mat-tab label="Required Parts">
+      <mat-toolbar color="primary">Required Parts</mat-toolbar>
+      <app-ordered-parts-log #reqPartLog (addRequiredPart)="saveRequiredPart($event)" (updateRequiredPart)="updateRequiredPart($event)"></app-ordered-parts-log>
+    </mat-tab>
+  </mat-tab-group>
 </div>

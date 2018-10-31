@@ -42,7 +42,7 @@ export class RestorationComponent implements OnInit {
 
   saveLogItem(logItem:ProcessLogItem){
   this.restoreApi.saveRestoreProcessLog(this.jobId, logItem).subscribe(r => {
-    console.log(r);
+    //console.log(r);
     if (r.result === "ADDED") {
       this._refreshProcessLog();
     } 
@@ -50,10 +50,9 @@ export class RestorationComponent implements OnInit {
 }
 
 saveRequiredPart(reqPart:OrderedPart){
-    console.log('saving req part');
-    console.log(reqPart);
+    //console.log(reqPart);
     this.restoreApi.saveRestoreOrderedPart(this.jobId, reqPart).subscribe(r => {
-      console.log(r);
+      //console.log(r);
       if (r.result === "ADDED") {
         this._refreshRequiredPartsLog();
       } 
@@ -61,10 +60,9 @@ saveRequiredPart(reqPart:OrderedPart){
 }
 
 updateRequiredPart(reqPart:OrderedPart){
-  console.log('updating req part');
-  console.log(reqPart);
+  //console.log(reqPart);
   this.restoreApi.updateRestoreOrderedPart(this.jobId, reqPart).subscribe(r => {
-    console.log(r);
+    //console.log(r);
     if (r.result === "UPDATED") {
       this._refreshRequiredPartsLog();
     } 
@@ -73,7 +71,7 @@ updateRequiredPart(reqPart:OrderedPart){
 
   saveRestorePart(part: RestorePart) {
     this.restoreApi.saveRestorePart(this.jobId, part).subscribe(r => {
-      console.log(r);
+      //console.log(r);
       if (r.result === "UPDATED") {
         this._refreshPartLogs();
       } else if (r.result == "ADDED") {

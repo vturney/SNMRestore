@@ -1,3 +1,33 @@
-table {
-    width: 100%;
-  }
+.mat-table {
+  min-width: auto !important;
+  width: 100% !important;
+  table-layout: fixed;
+}
+
+.mat-header-row {
+  width: 100%;
+}
+
+.mat-row {
+  width: 100%;
+}
+
+.mat-column-part {
+  width:55%;
+}
+
+.mat-column-colour {
+  width:  15% ;
+}
+
+.mat-column-sent {
+  width: 10%;
+}
+
+.mat-column-quantity {
+  width: 10% ;
+}
+
+.mat-column-quantity {
+  width: 10% ;
+}

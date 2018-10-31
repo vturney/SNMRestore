@@ -13,7 +13,7 @@
   </mat-accordion>
   <mat-list color="primary">
     <ng-container *ngFor="let partGroup of requiredParts">
-      <mat-list-item>{{partGroup.state}}</mat-list-item>
+      <h3 matSubheader>{{partGroup.state}}</h3>
       <mat-list style="margin-left:30px;">
         <div *ngFor="let part of partGroup.part">
           <mat-list-item>

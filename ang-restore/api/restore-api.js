@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header('Access-Control-Allow-Methods', 'GET, PATCH, POST,DELETE');
+    res.header('Access-Control-Allow-Methods', "GET, PATCH, POST, DELETE, PUT, OPTIONS");
     next();
 });
 
@@ -35,7 +35,7 @@ app.get('/api/v1/processLogs/:jobId', (req, res) => {
         _getRestorationProcessLog(jobId, function (data) {
             //console.log('get restoration complete');
             if (data) {
-                console.log(data);
+                //console.log(data);
                 var processLogItems = data.items;
                 response = _wrapDBJson(processLogItems, "processLog");
                 res.send(response)
@@ -63,7 +63,7 @@ app.get('/api/v1/orderedParts/:jobId', (req, res) => {
         _getRestorationOrderedParts(jobId, function (data) {
             //console.log('get ordered parts complete');
             if (data) {
-                console.log(data);
+                //console.log(data);
                 var processLogItems = data.items;
                 response = _wrapDBJson(processLogItems, "orderedParts");
                 res.send(response)
@@ -114,15 +114,15 @@ app.get('/api/v1/restorations/:jobId', (req, res) => {
 app.post('/api/v1/restorations', function (req, res) {
     var restoration = req.body;
     console.log('POST restoration');
-    console.log(restoration);
+   // console.log(restoration);
     try {
         _addRestoration(restoration, function (partAdded) {
             if (partAdded) {
-                console.log('post restoration, response:ADDED');
+               // console.log('post restoration, response:ADDED');
                 res.json({ result: "ADDED" });
             }
             else {
-                console.log('post restoration, response:UPDATED');
+               // console.log('post restoration, response:UPDATED');
                 res.json({ result: "UPDATED" });
             }
         });
@@ -130,6 +130,30 @@ app.post('/api/v1/restorations', function (req, res) {
     catch (err) {
         console.log(err);
         console.log('post restoration, response:ERROR');
+        res.status(400);
+        res.json({ result: "ERROR" });
+    }
+});
+
+//Route path: /restorations/:jobId/parts/:partId
+//Request URL: DEL http://localhost:3000/api/v1/restorations/25266/parts/partId
+//req.params: 
+app.delete('/api/v1/restorations/:jobId/parts/:partId', function (req, res) {
+    var part = req.body;
+    var jobId = Number(req.params.jobId);
+    var partId = req.params.partId;
+    console.log('DELETE restorations/part, jobId: ' + jobId+', partId: '+partId);
+    try {
+        _deleteIfExistsPartForRestoration(jobId, partId, function (partUpdated) {
+            if (partUpdated) {
+                //console.log('del restore parts, response: UPDATED');
+                res.json({ result: "UPDATED" });
+            } 
+        });
+    }
+    catch (err) {
+        console.log(err);
+        console.log('del restore parts, response:ERROR');
         res.status(400);
         res.json({ result: "ERROR" });
     }
@@ -143,7 +167,7 @@ app.post('/api/v1/restorations/:jobId/parts', function (req, res) {
     var part = req.body;
     var jobId = Number(req.params.jobId);
     console.log('POST restorations/part, jobId: ' + jobId);
-    console.log(part);
+    //console.log(part);
     try {
         part.part = part.part.toLowerCase();
         part.component = part.component.toLowerCase();
@@ -151,14 +175,14 @@ app.post('/api/v1/restorations/:jobId/parts', function (req, res) {
         part.colour = part.colour.toLowerCase();
         _updateIfExistsPartForRestoration(jobId, part, function (partUpdated) {
             if (partUpdated) {
-                console.log('post parts, response: UPDATED');
+              //  console.log('post parts, response: UPDATED');
                 res.json({ result: "UPDATED" });
             } else {
                 // add part
                 _addPartForRestoration(jobId, part, function (partAdded) {
                     if (partAdded) {
                         _addPartIfNotExist(part);
-                        console.log('post parts, response:ADDED');
+                      //  console.log('post parts, response:ADDED');
                         res.json({ result: "ADDED" });
                     } else {
                         res.json({ result: "UKNOWN" });
@@ -232,11 +256,11 @@ app.post('/api/v1/orderedParts/:jobId/orderedPart', function (req, res) {
 //req.params: 
 app.patch('/api/v1/orderedParts/:jobId/orderedPart', function (req, res) {
     var log = req.body;
-    var jobId = Number(req.params.jobId);   
+    var jobId = Number(req.params.jobId);
     var patch = req.body;
     var orderedPartId = patch.id;
     var state = Number(patch.state);
-    console.log('PATCH orderedParts/orderedPart, jobId: ' + jobId+', partId:' +orderedPartId+', state:' +state);
+    console.log('PATCH orderedParts/orderedPart, jobId: ' + jobId + ', partId:' + orderedPartId + ', state:' + state);
     //console.log(log);
     try {
         _updateOrderedPartForRestoration(jobId, orderedPartId, state, function (orderedPartUpdated) {
@@ -360,7 +384,7 @@ function _addByNameIfNotExist(collection, nameToFind) {
         function (err, result) {
             //console.log(result);
             var added = !result.lastErrorObject.updatedExisting;
-            console.log('added new, ' + collection + ' with name: ' + nameToFind + ': ' + added);
+            //console.log('added new, ' + collection + ' with name: ' + nameToFind + ': ' + added);
             if (err) {
                 console.log(err);
             }
@@ -375,7 +399,7 @@ function _addByNameAndTypeIfNotExist(collection, nameToFind, componentType) {
         function (err, result) {
             //console.log(result);
             var added = !result.lastErrorObject.updatedExisting;
-            console.log('added new, ' + collection + ' with name: ' + nameToFind + ', with type: ' + componentType + ': ' + added);
+            //console.log('added new, ' + collection + ' with name: ' + nameToFind + ', with type: ' + componentType + ': ' + added);
             if (err) {
                 console.log(err);
             }
@@ -409,7 +433,7 @@ function _addRestoration(restoration, onComplete) {
             if (result.upsertedCount === 1) {
                 added = true;
             }
-            console.log('add restoration:' + added);
+            //console.log('add restoration:' + added);
             onComplete(added);
         }
     );
@@ -475,37 +499,37 @@ function _addOrderedPartForRestoration(jobId, desc, onComplete) {
     );
 }
 
-function _updateOrderedPartForRestoration(jobId,  orderedPartId, state, onComplete) {
+function _updateOrderedPartForRestoration(jobId, orderedPartId, state, onComplete) {
     db.collection('orderedparts').
-    findOneAndUpdate(
-        {
-            "jobid": jobId,
-            "items": {
-                $elemMatch: {
-                    "id": ObjectID(orderedPartId)
+        findOneAndUpdate(
+            {
+                "jobid": jobId,
+                "items": {
+                    $elemMatch: {
+                        "id": ObjectID(orderedPartId)
+                    }
                 }
+            },
+            {    // Update
+                $set: { "items.$.state": state, "items.$.date": Date.now() }
+            },
+            {
+                projection: { "jobid": 1, "items.$": 1 }
             }
-        },
-        {    // Update
-            $set: { "items.$.state": state, "items.$.date": Date.now() }
-        },
-        {
-            projection: { "jobid": 1, "items.$": 1 }
-        }
-        , function (err, result) {
-            //
-            //console.log('db result');
-            // console.log(result);
-            // if result.value has something - it found matching record
-            // if lasteErrorObject.updatedExisting : true - it updated the record
-            // if result.ok : 1 = no error.
-            var updated = false;
-            if (result.ok === 1 && result.lastErrorObject.updatedExisting && result.value) {
-                updated = true;
-            }
-            console.log('found and updated:' + updated);
-            onComplete(updated);
-        });
+            , function (err, result) {
+                //
+                //console.log('db result');
+                // console.log(result);
+                // if result.value has something - it found matching record
+                // if lasteErrorObject.updatedExisting : true - it updated the record
+                // if result.ok : 1 = no error.
+                var updated = false;
+                if (result.ok === 1 && result.lastErrorObject.updatedExisting && result.value) {
+                    updated = true;
+                }
+               // console.log('found and updated:' + updated);
+                onComplete(updated);
+            });
 }
 
 function _updateIfExistsPartForRestoration(jobId, part, onComplete) {
@@ -544,7 +568,34 @@ function _updateIfExistsPartForRestoration(jobId, part, onComplete) {
                 if (result.ok === 1 && result.lastErrorObject.updatedExisting && result.value) {
                     updated = true;
                 }
-                console.log('found and updated:' + updated);
+               // console.log('found and updated:' + updated);
+                onComplete(updated);
+            });
+}
+
+function _deleteIfExistsPartForRestoration(jobId, partId, onComplete) {
+    db.collection('restorations').
+        findOneAndUpdate(
+            {
+                "jobid": jobId
+            },
+            {    // Update
+                $pull: {
+                    parts: {"_id": ObjectID(partId)}
+                }
+            }
+            , function (err, result) {
+                //
+                //console.log('db result');
+                // console.log(result);
+                // if result.value has something - it found matching record
+                // if lasteErrorObject.updatedExisting : true - it updated the record
+                // if result.ok : 1 = no error.
+                var updated = false;
+                if (result.ok === 1 && result.lastErrorObject.updatedExisting && result.value) {
+                    updated = true;
+                }
+               // console.log('found and updated:' + updated);
                 onComplete(updated);
             });
 }

@@ -7,6 +7,7 @@ import { PartDescription } from 'src/app/shared/model/restore-parts/part-descrip
 import { NamedModel } from 'src/app/shared/model/restore-parts/restore-parts-interfaces';
 import { RestoreRestService } from 'src/app/data/restore-rest.service';
 import { ComponentTypeEnum } from 'src/app/shared/model/restore-parts/componentType-enum';
+import { FormGroupDirective } from '@angular/forms';
 
 @Component({
   selector: 'app-part-add',
@@ -17,7 +18,7 @@ export class PartAddComponent implements OnInit {
 
   @Output() addRestorePart = new EventEmitter<RestorePart>();
 
-  @ViewChild('componentField') fieldComponent;
+  @ViewChild('componentField') fieldComponent; 
   @ViewChild('typeField') fieldType;
   @ViewChild('partNameField') fieldPart;
   @ViewChild('partDescField') fieldDesc;
@@ -43,8 +44,7 @@ export class PartAddComponent implements OnInit {
   ngOnInit() {
     //this.refreshData();
     this.types = Object.keys(ComponentTypeEnum).filter((k) => Number.isNaN(parseInt(k)));
-    
-    this._clearForm();
+    this._setDefaults();
   }
 
   refreshData() {
@@ -74,7 +74,7 @@ export class PartAddComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  onSubmit(formDirective: FormGroupDirective) {
     if (!this._partValid()) {
       this.status = "Missing information";
     }
@@ -82,19 +82,20 @@ export class PartAddComponent implements OnInit {
       this.status = "";
       this._populateRestorePart();
       this.addRestorePart.emit(this.restorePart);
-      this._clearForm();
+      this._clearForm(formDirective);
+      this.fieldComponent.focus()
     }
   }
 
   compnentBlur() {
-    console.log("on component blur");
+   // console.log("on component blur");
     var existingComponent = this._getSelectedComponent();
     if (existingComponent) {
-      console.log("disable type");
+     // console.log("disable type");
       this.disableType = true;
       this._fieldSetValue(this.fieldType, this._getTypeForSelectedComponent());
     } else {
-      console.log("enable type");
+     // console.log("enable type");
       this.disableType = false;
       this.fieldType.form.setValue('');
     }
@@ -109,19 +110,22 @@ export class PartAddComponent implements OnInit {
     this.restorePart.description = this._fieldValue(this.fieldDesc);
   }
 
-  
-
-  _clearForm(){
-    this._fieldSetValue(this.fieldColour, '');
-    this._fieldSetValue(this.fieldComponent, '');
-    this._fieldSetValue(this.fieldPart, '');
-    this._fieldSetValue(this.fieldType, '');
-    this._fieldSetValue(this.fieldDesc, '');
+  _setDefaults(){
     this.restorePart = new RestorePart();
     this.restorePart.quantity = 1;
     this.restorePart.sent = true;
     this.disableType = false;
     this.status = '';
+  }
+
+  _clearForm(formDirective : FormGroupDirective){          
+    this._setDefaults();
+    this._fieldSetValue(this.fieldColour, '');
+    this._fieldSetValue(this.fieldComponent, '');
+    this._fieldSetValue(this.fieldPart, '');
+    this._fieldSetValue(this.fieldType, '');
+    this._fieldSetValue(this.fieldDesc, '');
+    //formDirective.resetForm();  
   }
 
   _getTypeForSelectedComponent(): string {
@@ -148,7 +152,7 @@ export class PartAddComponent implements OnInit {
     this._fieldValid(this.fieldDesc) &&
     this._fieldValid(this.fieldColour) &&
     this.restorePart.quantity > 0);
-    console.log(formValid);
+  //  console.log(formValid);
     return formValid;
   }
 

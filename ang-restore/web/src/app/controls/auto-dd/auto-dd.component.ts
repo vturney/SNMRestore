@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith, filter, toArray, flatMap } from 'rxjs/operators';
@@ -23,18 +23,22 @@ export class AutoDdComponent implements OnInit {
     }
   }
 
-  @Input() watermark: string;
+    @Input() watermark: string;
   @Input()
-
   set disabled(disabled: boolean) { this._disableField(disabled); }
 
-
   @Output() blur = new EventEmitter();
+  @ViewChild('txtInput') inputField : ElementRef;
+
   form = new FormControl();
   filteredOptions: Observable<string[]>;
 
   ngOnInit() {
 
+  }
+
+  focus(){
+    this.inputField.nativeElement.focus();
   }
 
   onblur() {
@@ -43,7 +47,7 @@ export class AutoDdComponent implements OnInit {
 
 
   private _disableField(disable: boolean) {
-    console.log('auto-dd disable set:' + disable);
+    //console.log('auto-dd disable set:' + disable);
     if (disable === true) { this.form.disable(); }
     else {
       this.form.enable();

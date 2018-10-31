@@ -1,5 +1,5 @@
 <mat-form-field fxFlex="90">
-    <input type="text" [placeholder]="watermark" required=true aria-label="Component" (blur)="onblur()" 
+    <input type="text" #txtInput [placeholder]="watermark" required=true aria-label="Component" (blur)="onblur()" 
     matInput [formControl]="form" [matAutocomplete]="auto">
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onblur()" >
       <mat-option *ngFor="let option of filteredOptions| async " [value]="option">

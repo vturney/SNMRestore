@@ -104,6 +104,21 @@ export class RestoreRestService {
       }));
   }
 
+  //  DEL http://localhost:3000/api/v1/restorations/25622/parts/4598798787
+  deleteRestorePart(jobId: number, partId: string): Observable<ResultResponse> {
+   // console.log('save Restore Part');
+   // console.log(part);
+   var url = endpoint + 'restorations/' + jobId + '/parts/' + partId;
+    return this.http.delete<ResultResponse>(url).
+      pipe(map(r => {
+        if (r.result === "UPDATED" || r.result === "ADDED") {
+          // Restoration parts data has changed refresh the cache.
+          this._updateCurrentRestorationCache(jobId);
+        }
+        return r;
+      }));
+  }
+
   saveRestoration(restoration:RestorationDetail): Observable<ResultResponse>{
     console.log('save Restoration');
     console.log(restoration);
@@ -148,7 +163,6 @@ export class RestoreRestService {
     //console.log('get restoration parts, id: ' + jobId + ', type: ' + type);
     return this._getRestoration(jobId).
       pipe(map(r => {
-        //console.log(r); 
         return r.parts.filter(p => p.type.toString() === type.toString()); // toString as JSON.
       }));
   }

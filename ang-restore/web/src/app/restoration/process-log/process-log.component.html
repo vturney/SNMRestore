@@ -13,7 +13,7 @@
         </mat-accordion>  
   <mat-list color="primary">
     <mat-list-item *ngFor="let log of logItems">
-        <h3 matLine> {{log.date  | date:'dd/MM/yyyy'}} : {{log.log}} </h3>       
+        <p matLine> {{log.date  | date:'dd/MM/yyyy'}} : {{log.log}} </p>       
     </mat-list-item>
   </mat-list>
 </div>

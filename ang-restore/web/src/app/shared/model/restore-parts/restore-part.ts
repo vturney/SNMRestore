@@ -1,5 +1,5 @@
 export class RestorePart {
-    id: number;
+    _id: number;
     part: string;
     type : number;
     component: string;
