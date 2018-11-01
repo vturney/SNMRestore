@@ -1,14 +1,14 @@
 <div fxFlex="100">
     <mat-accordion  [multi]='true'>
-        <mat-expansion-panel [(expanded)]="expandAdd">
+        <mat-expansion-panel [(expanded)]="expandAdd" (closed)="panelClosed()">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Add Restoration
+              {{mode}} Restoration
             </mat-panel-title>
             <mat-panel-description>                  
             </mat-panel-description>
           </mat-expansion-panel-header>
-          <app-add-restoration #addRestoration (saveRestoration)="restorationAdded()"></app-add-restoration>
+          <app-add-restoration #addRestoration (saveRestoration)="resetAddPanel()"></app-add-restoration>
         </mat-expansion-panel>
         </mat-accordion>  
   <mat-list color="primary">

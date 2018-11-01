@@ -63,7 +63,6 @@ export class PartAddComponent implements OnInit {
 
     this.restoreApi.getBikeComponents().subscribe((data: BikeComponent[]) => {
       this._bikeComponents = data;
-      console.log(data);
       this.components = this._bikeComponents.map(t => t.name);
       this.components.sort((a, b) => a.localeCompare(b));
     });
@@ -120,13 +119,13 @@ export class PartAddComponent implements OnInit {
   }
 
   _clearForm(formDirective : FormGroupDirective){          
-    this._setDefaults();
-    this._fieldSetValue(this.fieldColour, '');
-    this._fieldSetValue(this.fieldComponent, '');
-    this._fieldSetValue(this.fieldPart, '');
-    this._fieldSetValue(this.fieldType, '');
-    this._fieldSetValue(this.fieldDesc, '');
-    //formDirective.resetForm();  
+    this._setDefaults();    
+    this._resetFieldClearErros(this.fieldColour);
+    this._resetFieldClearErros(this.fieldComponent);
+    this._resetFieldClearErros(this.fieldPart);
+    this._resetFieldClearErros(this.fieldType);
+    this._resetFieldClearErros(this.fieldDesc);
+    
   }
 
   _getTypeForSelectedComponent(): string {
@@ -167,6 +166,11 @@ export class PartAddComponent implements OnInit {
 
   private _fieldSetValue(field: any, value: any) {
     field.form.setValue(value);
+  }
+
+  private _resetFieldClearErros(field : any){
+    field.form.setValue('');    
+    // setErrors(null) stops the invalid check when re sending.
   }
 }
 

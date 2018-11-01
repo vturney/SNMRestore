@@ -13,6 +13,7 @@ export class HomeComponent implements OnInit {
   expandAdd : boolean;
   @Output() jobSelected = new EventEmitter<number>();
   @ViewChild('addRestoration') addRestorationComp :AddRestorationComponent;
+  mode = 'Add';
 
   constructor(public restoreApi:RestoreRestService){        
   }
@@ -28,12 +29,21 @@ export class HomeComponent implements OnInit {
 
   editJob(restoration : RestorationDetail){
     this.addRestorationComp.editRestoration(restoration);
+    this.mode = 'Edit';
     this.expandAdd = true;
   }
 
-  restorationAdded() {
+  panelClosed(){
+    if(this.mode === 'Edit'){
+    this.addRestorationComp.ResetForm();
+    this.resetAddPanel();
+    }
+  }
+
+  resetAddPanel() {
     this.refresh();
     this.expandAdd = false;
+    this.mode = 'Add';
   }
 
   public refresh(){

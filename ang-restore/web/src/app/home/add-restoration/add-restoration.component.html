@@ -1,5 +1,5 @@
 <div fxFlex="100" fxLayoutAlign="center">
-  <form fxFlex="90" [formGroup]="restorationForm" (ngSubmit)="saveRestorationForm(formDirective)" #formDirective="ngForm">
+  <form fxFlex="90" [formGroup]="restorationForm" (ngSubmit)="saveRestorationForm()" #formDirective="ngForm">
     <div fxLayout="row" fxLayoutAlign="center">
       <mat-form-field fxFlex="25"><input formControlName="job" required="true" autocomplete="off" type="number"
           matInput placeholder="Job"></mat-form-field>

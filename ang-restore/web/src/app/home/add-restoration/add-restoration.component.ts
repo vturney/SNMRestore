@@ -13,6 +13,7 @@ import { FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
 export class AddRestorationComponent implements OnInit {
 
   @Output() saveRestoration = new EventEmitter();
+  @ViewChild('formDirective') formDirective : FormGroupDirective;
 
   restorationForm = new FormGroup({
     job: new FormControl(),
@@ -32,21 +33,23 @@ export class AddRestorationComponent implements OnInit {
   ngOnInit() {
   }
 
-  _resetForm(formDirective: FormGroupDirective) {
+
+  ResetForm() {
     this.currentRestorationId = undefined;
-    formDirective.resetForm();
+    this.formDirective.resetForm();
     this.restorationForm.reset();
   }
 
   _formValue() { return this.restorationForm.value; }
 
   editRestoration(detail: RestorationDetail) {
+    console.log(this.formDirective);
     this.currentRestorationId = detail.id;
     console.log(detail);
     this._setFormFromRestorationDetail(detail);
   }
 
-  saveRestorationForm(formDirective: FormGroupDirective) {
+  saveRestorationForm() {
     var restoration = this._getRestorationDetailFromForm();
     console.log('save restoration');
     console.log(restoration);
@@ -57,7 +60,7 @@ export class AddRestorationComponent implements OnInit {
         if (r.result === "UPDATED") {
           this.saveRestoration.emit()
         }
-        this._resetForm(formDirective);
+        this.ResetForm();
       });
     } else {
       this.restoreApi.saveRestoration(restoration).subscribe(r => {
@@ -65,7 +68,7 @@ export class AddRestorationComponent implements OnInit {
         if (r.result == "ADDED") {
           this.saveRestoration.emit()
         }
-        this._resetForm(formDirective);
+        this.ResetForm();
       });
     }
   }
