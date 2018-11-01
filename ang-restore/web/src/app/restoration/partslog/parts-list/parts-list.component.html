@@ -1,30 +1,3 @@
-<!-- <div fxFlex="100" fxLayoutAlign="center">
-  <table mat-table [dataSource]="restoreParts">
-    <ng-container matColumnDef="component">
-      <th mat-header-cell *matHeaderCellDef> Component </th>
-      <td mat-cell *matCellDef="let part"> {{part.component | titlecase}} </td>
-    </ng-container>
-    <ng-container matColumnDef="part">
-      <th mat-header-cell *matHeaderCellDef> Part </th>
-      <td mat-cell *matCellDef="let part"> {{part.part | titlecase}} : {{part.description | titlecase}}</td>
-    </ng-container>
-    <ng-container matColumnDef="colour">
-      <th mat-header-cell *matHeaderCellDef> Colour </th>
-      <td mat-cell *matCellDef="let part">{{part.colour | titlecase}}</td>
-    </ng-container>
-    <ng-container matColumnDef="sent">
-      <th mat-header-cell *matHeaderCellDef> Sent </th>
-      <td mat-cell *matCellDef="let part"> {{part.sent === true ? 'Yes' : 'No'}} </td>
-    </ng-container>
-    <ng-container matColumnDef="quantity">
-      <th mat-header-cell *matHeaderCellDef> Quantity </th>
-      <td mat-cell *matCellDef="let part"> {{part.quantity}} </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
-</div>
-<br> -->
 <div fxFlex="100">
   <mat-list color="primary">
     <ng-container *ngFor="let componentGroup of groupedByParts">

@@ -1,5 +1,5 @@
 <div fxFlex="100" fxLayoutAlign="center">
-  <form fxFlex="90" [formGroup]="restorationForm" (ngSubmit)="saveRestoration(formDirective)" #formDirective="ngForm">
+  <form fxFlex="90" [formGroup]="restorationForm" (ngSubmit)="saveRestorationForm(formDirective)" #formDirective="ngForm">
     <div fxLayout="row" fxLayoutAlign="center">
       <mat-form-field fxFlex="25"><input formControlName="job" required="true" autocomplete="off" type="number"
           matInput placeholder="Job"></mat-form-field>
@@ -23,8 +23,8 @@
           placeholder="Bike Image Url"></mat-form-field>
     </div>
     <div fxLayout="row" fxLayoutAlign="center">
-      <button [disabled]="!restorationForm.valid" fxFlex="50" mat-raised-button color="accent" type="submit">Add
-        Restoration</button>
+      <button [disabled]="!restorationForm.valid" fxFlex="50" mat-raised-button color="accent" type="submit">
+          Save Restoration</button>
     </div>
   </form>
 </div>

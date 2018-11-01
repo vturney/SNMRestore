@@ -32,8 +32,8 @@ interface ProcessLogResponse {
   processLog: ProcessLogItem[];
 }
 
-interface OrderedPartsResponse{
-  orderedParts : OrderedPart[];
+interface OrderedPartsResponse {
+  orderedParts: OrderedPart[];
 }
 
 interface RestorationResponse {
@@ -77,23 +77,23 @@ export class RestoreRestService {
 
   getRestorations(): Observable<RestorationDetail[]> {
     return this.http.get<RestorationsDetails>(endpoint + 'restorationDetails').
-    pipe(map((response: RestorationsDetails) => { return response.restorations; }));
+      pipe(map((response: RestorationsDetails) => { return response.restorations; }));
   }
 
-  getRestorationProcessLog(jobId : number):Observable<ProcessLogItem[]>{
+  getRestorationProcessLog(jobId: number): Observable<ProcessLogItem[]> {
     return this.http.get<ProcessLogResponse>(endpoint + 'processLogs/' + jobId).
-      pipe(map((response: ProcessLogResponse) => {return response.processLog; }));
+      pipe(map((response: ProcessLogResponse) => { return response.processLog; }));
   }
 
-  getRestorationOrderedParts(jobId : number):Observable<OrderedPart[]>{
+  getRestorationOrderedParts(jobId: number): Observable<OrderedPart[]> {
     return this.http.get<OrderedPartsResponse>(endpoint + 'orderedParts/' + jobId).
-      pipe(map((response: OrderedPartsResponse) => {return response.orderedParts; }));
+      pipe(map((response: OrderedPartsResponse) => { return response.orderedParts; }));
   }
 
   //  POST http://localhost:3000/api/v1/restorations/25622/parts
   saveRestorePart(jobId: number, part: RestorePart): Observable<ResultResponse> {
-   // console.log('save Restore Part');
-   // console.log(part);
+    // console.log('save Restore Part');
+    // console.log(part);
     return this.http.post<ResultResponse>(endpoint + 'restorations/' + jobId + '/parts', part).
       pipe(map(r => {
         if (r.result === "UPDATED" || r.result === "ADDED") {
@@ -106,9 +106,9 @@ export class RestoreRestService {
 
   //  DEL http://localhost:3000/api/v1/restorations/25622/parts/4598798787
   deleteRestorePart(jobId: number, partId: string): Observable<ResultResponse> {
-   // console.log('save Restore Part');
-   // console.log(part);
-   var url = endpoint + 'restorations/' + jobId + '/parts/' + partId;
+    // console.log('save Restore Part');
+    // console.log(part);
+    var url = endpoint + 'restorations/' + jobId + '/parts/' + partId;
     return this.http.delete<ResultResponse>(url).
       pipe(map(r => {
         if (r.result === "UPDATED" || r.result === "ADDED") {
@@ -119,27 +119,37 @@ export class RestoreRestService {
       }));
   }
 
-  saveRestoration(restoration:RestorationDetail): Observable<ResultResponse>{
-    console.log('save Restoration');
-    console.log(restoration);
+  saveRestoration(restoration: RestorationDetail): Observable<ResultResponse> {
+    // console.log('save Restoration');
+    // console.log(restoration);
     return this.http.post<ResultResponse>(endpoint + 'restorations/', restoration).
-    pipe(map(r => { return r;}));
+      pipe(map(r => { return r; }));
   }
 
-  saveRestoreProcessLog(jobId: number,log:ProcessLogItem) : Observable<ResultResponse>{
+  // PATCH http://localhost:3000/api/v1/restorationDetails/54648979788451
+  updateRestoration(restoration: RestorationDetail): Observable<ResultResponse> {
+    console.log('update Restoration');
+    console.log(restoration);
+    var restorationId = restoration.id;
+    return this.http.patch<ResultResponse>(endpoint + 'restorationDetails/' + restorationId, restoration).
+      pipe(map(r => { return r; }));
+  }
+
+
+  saveRestoreProcessLog(jobId: number, log: ProcessLogItem): Observable<ResultResponse> {
     return this.http.post<ResultResponse>(endpoint + 'processLogs/' + jobId + '/logItem', log).
-    pipe(map(r => { return r;}));
+      pipe(map(r => { return r; }));
   }
 
-  
-  saveRestoreOrderedPart(jobId: number, orderedPart:OrderedPart) : Observable<ResultResponse>{
+
+  saveRestoreOrderedPart(jobId: number, orderedPart: OrderedPart): Observable<ResultResponse> {
     return this.http.post<ResultResponse>(endpoint + 'orderedParts/' + jobId + '/orderedPart', orderedPart).
-    pipe(map(r => { return r;}));
+      pipe(map(r => { return r; }));
   }
 
-  updateRestoreOrderedPart(jobId: number, orderedPart:OrderedPart) : Observable<ResultResponse>{
+  updateRestoreOrderedPart(jobId: number, orderedPart: OrderedPart): Observable<ResultResponse> {
     return this.http.patch<ResultResponse>(endpoint + 'orderedParts/' + jobId + '/orderedPart', orderedPart).
-    pipe(map(r => { return r;}));
+      pipe(map(r => { return r; }));
   }
 
   private _getRestorationFromApi(jobId: number): Observable<Restoration> {

@@ -8,7 +8,7 @@
             <mat-panel-description>                  
             </mat-panel-description>
           </mat-expansion-panel-header>
-          <app-add-restoration #addRestoration (addedRestoration)="restorationAdded()"></app-add-restoration>
+          <app-add-restoration #addRestoration (saveRestoration)="restorationAdded()"></app-add-restoration>
         </mat-expansion-panel>
         </mat-accordion>  
   <mat-list color="primary">
@@ -21,6 +21,9 @@
        <button mat-icon-button (click)="setCurrent(job.jobId)">
           <mat-icon>build</mat-icon>
        </button>
+       <button mat-icon-button (click)="editJob(job)">
+        <mat-icon>edit</mat-icon>
+     </button>
     </mat-list-item>
   </mat-list>
 </div>
