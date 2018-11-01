@@ -1,7 +1,7 @@
 <div fxFlex="100" fxLayoutAlign="center">
   <form (ngSubmit)="onSubmit(formDirective)" #formDirective="ngForm" fxFlex="90">
     <div fxLayout="row">
-      <app-auto-dd fxFlex="50" #componentField [options]="components" watermark="Component" (blur)="compnentBlur($event)"></app-auto-dd>
+      <app-auto-dd fxFlex="50" #componentField [options]="components" watermark="Component" (blur)="compnentBlur()"></app-auto-dd>
       <app-auto-dd fxFlex="50" [disabled]="disableType" #typeField [options]="types" watermark="Type"></app-auto-dd>
     </div>
     <div fxLayout="row">

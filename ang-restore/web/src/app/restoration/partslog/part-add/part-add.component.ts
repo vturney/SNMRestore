@@ -63,6 +63,7 @@ export class PartAddComponent implements OnInit {
 
     this.restoreApi.getBikeComponents().subscribe((data: BikeComponent[]) => {
       this._bikeComponents = data;
+      console.log(data);
       this.components = this._bikeComponents.map(t => t.name);
       this.components.sort((a, b) => a.localeCompare(b));
     });
