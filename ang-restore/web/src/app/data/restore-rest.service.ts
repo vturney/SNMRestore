@@ -128,8 +128,8 @@ export class RestoreRestService {
 
   // PATCH http://localhost:3000/api/v1/restorationDetails/54648979788451
   updateRestoration(restoration: RestorationDetail): Observable<ResultResponse> {
-    console.log('update Restoration');
-    console.log(restoration);
+  //  console.log('update Restoration');
+  //  console.log(restoration);
     var restorationId = restoration.id;
     return this.http.patch<ResultResponse>(endpoint + 'restorationDetails/' + restorationId, restoration).
       pipe(map(r => { return r; }));

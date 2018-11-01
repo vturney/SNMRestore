@@ -718,17 +718,12 @@ function _updateRestorationDetails(restorationId, detail, onComplete) {
                 }
             }
             , function (err, result) {
-                //
-                console.log('db result');
-                 console.log(result);
-                // if result.value has something - it found matching record
-                // if lasteErrorObject.updatedExisting : true - it updated the record
-                // if result.ok : 1 = no error.
+                // console.log('db result');
+                 //console.log(result);                
                 var updated = false;
                 if (result.modifiedCount === 1) {
                     updated = true;
                 }
-                // console.log('found and updated:' + updated);
                 onComplete(updated);
             });
 }
